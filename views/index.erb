@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html ng-app="MyApp">
+<head>
+	<title>Auroville Photo Library</title>
+
+     <link rel="stylesheet"  type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jon.css">
+    <link rel="stylesheet" type="text/css" href="css/herbarium.css">
+     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+ </head>
+<body>
+    <div id='loading'>
+        <div id='info'>
+            <img id='logo' src="img/pf LOGO.jpg" />
+            <p id='waiting_message'>Image database loading... please wait.</p>
+        </div>
+        <div id='image'></div>
+    </div>
+
+    <div id='main-image-page'>
+        <div id='selectors' ng-controller='FilterController'>
+                <div class='whole'>
+                     
+                    <input id='searchbox' type='text' ng-model="filterService.searchText"  placeholder="Search Images" />
+                 
+                    <div id='display_options'>
+                       
+                        <span class='buttons mylabel'  >Display: </span>
+                     
+                        <span id='button_div'>
+                            <a><span id='thumbselector' class='selected buttons' onclick="    $('#table').hide();
+                            $('#thumbs').show();
+                            $(this).addClass('selected').removeClass('unselected');
+                            $('#detailselector').removeClass('selected').addClass('unselected');
+                            
+                            ";>Preview </span></a>
+                          
+                           
+                            <a><span id='detailselector' class='unselected buttons' onclick="$('#table').show(); $(this).addClass('selected').removeClass('unselected'); $('#thumbs').hide(); $('#thumbselector').removeClass('selected').addClass('unselected');";>Details </span></a>
+                        </span>
+
+                        <span id='range_div'>
+                            <input id='grid_input_size' type='range' value='20' min='10' max='30' oninput='gridReSize();'/>
+                        </span>
+                        <span id='upload_div'>
+                            <a href='/upload'><span class='buttons'>Upload </span></a>
+                        </span>
+                    </div>
+                </div>
+        </div>
+        
+        <div id='content' ng-controller='MainCtrl' ng-init='loadData()'>
+                
+                <table id='table'>
+                    <thead>
+                        <tr>
+                            <th class='clickable'>
+                                <span ng-click="sortOrder('category')">Category
+                                    <span ng-show="direction.active=='category'">
+                                        <span ng-show="direction.category==false">&#x25B2;</span>
+                                        <span ng-show="direction.category==true">&#x25BC;</span>
+                                    </span>
+                                </span>
+                            </th>
+                            <th class='clickable'>
+                                <span ng-click="sortOrder('title')">Title
+                                     <span ng-show="direction.active=='title'">
+                                        <span ng-show="direction.title==true">&#x25B2;</span>
+                                        <span ng-show="direction.title==false">&#x25BC;</span>
+                                    </span>
+                                </span>
+                            </th>
+                            <th class='clickable'>
+                                <span >Tags
+                                    <span >
+                                      
+                                    </span>
+                                 </span>
+                             </th>
+                            <th>Aspect Ratio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr ng-repeat='image in images | filter:filterService.activeFilters | filter:filterService.searchText' tooltip="{{image.full_metadata}}" ng-click="gotoUrl(image)">
+                            
+                            <span>
+                            <td class='festivalname'>
+                                 <span class='festival block'>{{image.category}}
+                                </span>    
+                            </td>
+                            <td class='datetext'>
+                                <span class='time'>{{image.title  }}</span>
+                            </td>
+                            <td><span class='tabletag' ng-repeat='tag in image.tags'>{{tag}}</span></td>
+                            <td class='event' >
+                              {{image.aspect_ratio}}
+                            </td>
+                        </span>
+                
+                        </tr>
+                    </tbody>
+                </table>
+                <div id='thumbs'>
+                     <div ng-repeat='image in images | filter:filterService.activeFilters | filter:filterService.searchText' tooltip="{{image.full_metadata}}">
+                        <div class='grid'>
+                            <a href='{{image.preview}}'>
+                                <img class='thumb_image' src="{{image.thumb_url}}"/>
+                            </a>
+                           <!--  <span class='thumb_title'>{{image.title}}</span>
+                             <div ng-repeat='tag in image.tags'>
+                                <span class='tag'>{{tag}}</span>
+                             </div> -->
+                        </div>
+                     </div>
+                </div>
+        </div>
+    </div>
+
+  <script src="https://apis.google.com/js/auth.js" type="text/javascript"></script>
+            <script src="js/angular.min.js"></script>
+            
+            <script src="bower_components/angular-file-upload/dist/angular-file-upload.js"></script>
+
+                 <script type="text/javascript" src="js/basics/services/services.js"></script>
+                        <script type="text/javascript" src="js/basics/app.js"></script>
+        
+
+
+    <script src="js/jquery.js"></script>
+   
+    <script type="text/javascript" src="js/basics/controllers/filterController.js"></script> 
+    <script type="text/javascript" src="js/basics/controllers/mainController.js"></script> 
+    
+
+  
+    <script>
+    function gridReSize(){
+        var value = document.getElementById("grid_input_size").value;
+        var newH = parseInt(value).toString().concat("vh");
+        console.log(newH);
+        $('.grid > a > img').css('height',newH);
+
+        // var margin = parseInt(((100 % parseInt(value))+0.1)/2).toString();
+        // $('#thumbs').css('margin-left',margin);
+    }
+    </script>
+
+</body>
+
+</html>
